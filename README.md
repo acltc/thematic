@@ -1,26 +1,23 @@
 # Thematic
 
-TODO: Write a gem description
+By running simple commands from the terminal, you can automatically convert regular [WrapBootstrap](http://wrapbootstrap.com) and other HTML/CSS/JS themes and have them integrate into your Rails app so that it plays nicely with the asset pipeline. 
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-```ruby
-gem 'thematic'
-```
 
-And then execute:
+    gem 'thematic'
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install thematic
 
 ## Usage
 
-TODO: Write usage instructions here
+Navigate to the root folder of your application, and run the following command:
+
+    rake thematic:install[../relative/path/to/the/root/folder/of/your/theme]
+    
+The root folder of your theme should be the one that contains the folders 'css' and 'js', as is standard in most WrapBoostrap themes.
+
 
 ## Contributing
 
