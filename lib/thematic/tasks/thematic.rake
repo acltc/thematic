@@ -8,15 +8,19 @@ namespace :thematic do
     puts "Installing CSS..."
     copy_from_path = "#{args[:filepath]}/css"
 
+    FileUtils.mkdir 'vendor/assets/stylesheets/theme'
+
     Dir.open(copy_from_path).each do |filename|
-      copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/") unless File.directory?("#{copy_from_path}/#{filename}")
+      copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/theme/") unless File.directory?("#{copy_from_path}/#{filename}")
     end
 
     puts "Installing JS..."
     copy_from_path = "#{args[:filepath]}/js"
 
+    FileUtils.mkdir 'vendor/assets/javascripts/theme'
+
     Dir.open(copy_from_path).each do |filename|
-      copy("#{copy_from_path}/#{filename}", "vendor/assets/javascripts/") unless File.directory?("#{copy_from_path}/#{filename}")
+      copy("#{copy_from_path}/#{filename}", "vendor/assets/javascripts/theme/") unless File.directory?("#{copy_from_path}/#{filename}")
     end
 
   end 
