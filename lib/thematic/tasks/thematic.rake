@@ -98,6 +98,22 @@ namespace :thematic do
       puts "Configuring FontAwesome..."
       FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css", "vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css.erb")
 
+      file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css.erb"
+      f = File.new(file_to_edit)
+      tempfile = File.open("file.tmp", 'w')
+
+      f.each do |line|
+        if line =~/url/
+          modified_line = line.gsub("../fonts", "<%= font_path('#{theme_subfolder}").gsub("?", "')%>?")
+          tempfile << modified_line
+        else
+          tempfile << line
+        end
+      end
+      FileUtils.mv("file.tmp", file_to_edit)
+      f.close
+      tempfile.close
+
     end
 
 
