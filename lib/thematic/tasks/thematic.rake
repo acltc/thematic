@@ -81,5 +81,16 @@ namespace :thematic do
       copy(filepath, "app/assets/images/#{theme_subfolder}/") unless File.directory?(filepath)
     end
 
+    puts "Copying fonts..."
+
+    FileUtils.mkdir "app/assets/fonts" unless File.exist?("app/assets/fonts")
+
+    copy_from_path = "#{args[:filepath]}/fonts"
+    files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
+
+    files_to_copy.each do |filepath|
+      copy(filepath, "app/assets/fonts/") unless File.directory?(filepath)
+    end
+
   end 
 end
