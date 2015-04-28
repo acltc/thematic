@@ -13,11 +13,32 @@ namespace :thematic do
     copy_from_path = "#{args[:filepath]}/css"
     theme_subfolder = "theme"
 
+
     FileUtils.mkdir "vendor/assets/stylesheets/#{theme_subfolder}"
 
-    Dir.open(copy_from_path).each do |filename|
-      copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/") unless File.directory?("#{copy_from_path}/#{filename}")
+
+    file_to_edit = "app/assets/stylesheets/application.css"
+    f = File.new(file_to_edit)
+
+    tempfile = File.open("file.tmp", 'w')
+    f.each do |line|
+      break if line =~/^*= require_tree ./
+      tempfile << line
     end
+
+    Dir.open(copy_from_path).each do |filename|
+      unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
+        copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/") 
+        tempfile << " *= require #{filename}\n"
+      end
+    end
+
+    tempfile << " *= require_tree .\n"
+    tempfile << " *= require_self\n"
+    tempfile << " */\n"
+    FileUtils.mv("file.tmp", file_to_edit)
+    f.close
+    tempfile.close
 
     puts "Installing JS..."
 
