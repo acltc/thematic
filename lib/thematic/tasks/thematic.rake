@@ -3,9 +3,13 @@ require 'fileutils'
 namespace :thematic do
   desc "descriptions of the task" 
   task :install, [:filepath] do |task, args|
+    # args[:filepath] represent the path of the theme
+
     puts "Inspecting theme..."
 
     puts "Installing CSS..."
+
+    # it is assumed that the theme comes with a folder called 'css'
     copy_from_path = "#{args[:filepath]}/css"
     theme_subfolder = "theme"
 
@@ -16,6 +20,8 @@ namespace :thematic do
     end
 
     puts "Installing JS..."
+
+    # it is assumed that the theme comes with a folder called 'js'
     copy_from_path = "#{args[:filepath]}/js"
 
     FileUtils.mkdir "vendor/assets/javascripts/#{theme_subfolder}"
