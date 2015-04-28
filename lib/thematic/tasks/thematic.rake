@@ -116,6 +116,32 @@ namespace :thematic do
 
     end
 
+    if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/style.css")
+      puts "Configuring images mentioned inside CSS..."
+      FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/style.css", "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb")
+
+      file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb"
+      f = File.new(file_to_edit)
+      tempfile = File.open("file.tmp", 'w')
+
+      f.each do |line|
+        if line =~/background.*url/
+          image_filename = /\(.*\)/.match(line)[0].delete('(').delete(')').split("/").last.delete('"')
+          new_snippet = "(\"<%= asset_path('#{image_filename}') %>\")"
+          # modified_line = line.gsub("../", "").gsub("img", "<%= asset_path('#{theme_subfolder}").gsub("\")", "')%>\")")
+          modified_line = line.gsub(/\(.*\)/, new_snippet)
+          tempfile << modified_line
+        else
+          tempfile << line
+        end
+      end
+      FileUtils.mv("file.tmp", file_to_edit)
+      f.close
+      tempfile.close
+
+    end
+
+
 
 
   end 
