@@ -94,7 +94,11 @@ namespace :thematic do
       copy(filepath, "app/assets/fonts/#{theme_subfolder}") unless File.directory?(filepath)
     end
 
-    puts "Configuring FontAwesome..."
+    if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css")
+      puts "Configuring FontAwesome..."
+      FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css", "vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css.erb")
+
+    end
 
 
 
