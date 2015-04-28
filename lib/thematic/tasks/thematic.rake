@@ -24,7 +24,7 @@ namespace :thematic do
         files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath)
+          unless File.directory?(filepath) || filepath.end_with?("min.css")
             filename = filepath.split("/").last
             copy(filepath, "vendor/assets/stylesheets/#{theme_subfolder}/") 
             tempfile << " *= require #{theme_subfolder}/#{filename.gsub('.css', '')}\n"
@@ -55,7 +55,7 @@ namespace :thematic do
         files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath)
+          unless File.directory?(filepath) || filepath.end_with?("min.js")
             filename = filepath.split("/").last
             copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
             tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
@@ -84,13 +84,19 @@ namespace :thematic do
     puts "Copying fonts..."
 
     FileUtils.mkdir "app/assets/fonts" unless File.exist?("app/assets/fonts")
+    FileUtils.remove_dir "app/assets/fonts/#{theme_subfolder}" if File.exist?("app/assets/fonts/#{theme_subfolder}")
+    FileUtils.mkdir "app/assets/fonts/#{theme_subfolder}"
 
     copy_from_path = "#{args[:filepath]}/fonts"
     files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
     files_to_copy.each do |filepath|
-      copy(filepath, "app/assets/fonts/") unless File.directory?(filepath)
+      copy(filepath, "app/assets/fonts/#{theme_subfolder}") unless File.directory?(filepath)
     end
+
+    puts "Configuring FontAwesome..."
+
+
 
   end 
 end
