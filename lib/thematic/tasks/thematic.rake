@@ -9,7 +9,6 @@ namespace :thematic do
 
     puts "Installing CSS..."
 
-    # it is assumed that the theme comes with a folder called 'css'
     copy_from_path = "#{args[:filepath]}/css"
     theme_subfolder = "theme"
 
@@ -42,7 +41,6 @@ namespace :thematic do
 
     puts "Installing JS..."
 
-    # it is assumed that the theme comes with a folder called 'js'
     copy_from_path = "#{args[:filepath]}/js"
 
     FileUtils.remove_dir "vendor/assets/javascripts/#{theme_subfolder}" if File.exist?("vendor/assets/javascripts/#{theme_subfolder}")
@@ -70,6 +68,18 @@ namespace :thematic do
     FileUtils.mv("file.tmp", file_to_edit)
     f.close
     tempfile.close
+
+    puts "Copying images..."
+
+    FileUtils.remove_dir "app/assets/images/#{theme_subfolder}" if File.exist?("app/assets/images/#{theme_subfolder}")
+    FileUtils.mkdir "app/assets/images/#{theme_subfolder}"
+
+    copy_from_path = "#{args[:filepath]}/img"
+    files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
+
+    files_to_copy.each do |filepath|
+      copy(filepath, "app/assets/images/#{theme_subfolder}/") unless File.directory?(filepath)
+    end
 
   end 
 end
