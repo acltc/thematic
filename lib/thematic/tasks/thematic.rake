@@ -22,12 +22,16 @@ namespace :thematic do
     tempfile = File.open("file.tmp", 'w')
     f.each do |line|
       if line =~/^*= require_tree ./ #we want to insert new require statements above this line
-        Dir.open(copy_from_path).each do |filename|
-          unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
-            copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/") 
-            tempfile << " *= require #{filename.gsub('.css', '')}\n"
+        files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
+
+        files_to_copy.each do |filepath|
+          unless File.directory?(filepath)
+            filename = filepath.split("/").last
+            copy(filepath, "vendor/assets/stylesheets/#{theme_subfolder}/") 
+            tempfile << " *= require #{theme_subfolder}/#{filename.gsub('.css', '')}\n"
           end
         end
+ 
       end
       tempfile << line
     end
@@ -49,11 +53,14 @@ namespace :thematic do
 
     tempfile = File.open("file.tmp", 'w')
     f.each do |line|
-      if line =~/^\/\/= require_tree ./ #we want to insert new require statements above this line
-        Dir.open(copy_from_path).each do |filename|
-          unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
-            copy("#{copy_from_path}/#{filename}", "vendor/assets/javascripts/#{theme_subfolder}/") unless File.directory?("#{copy_from_path}/#{filename}")
-            tempfile << "//= require #{filename.gsub('.js', '')}\n"
+      if line =~/^\/\/= require_tree ./ #we want to insert new require statements above  
+        files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
+
+        files_to_copy.each do |filepath|
+          unless File.directory?(filepath)
+            filename = filepath.split("/").last
+            copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
+            tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
           end
         end
       end
