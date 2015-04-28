@@ -13,7 +13,7 @@ namespace :thematic do
     copy_from_path = "#{args[:filepath]}/css"
     theme_subfolder = "theme"
 
-    FileUtils.remove_dir "vendor/assets/stylesheets/#{theme_subfolder}"
+    FileUtils.remove_dir "vendor/assets/stylesheets/#{theme_subfolder}" if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}")
     FileUtils.mkdir "vendor/assets/stylesheets/#{theme_subfolder}"
 
     file_to_edit = "app/assets/stylesheets/application.css"
@@ -41,7 +41,7 @@ namespace :thematic do
     # it is assumed that the theme comes with a folder called 'js'
     copy_from_path = "#{args[:filepath]}/js"
 
-    FileUtils.remove_dir "vendor/assets/javascripts/#{theme_subfolder}"
+    FileUtils.remove_dir "vendor/assets/javascripts/#{theme_subfolder}" if File.exist?("vendor/assets/javascripts/#{theme_subfolder}")
     FileUtils.mkdir "vendor/assets/javascripts/#{theme_subfolder}"
 
     file_to_edit = "app/assets/javascripts/application.js"
