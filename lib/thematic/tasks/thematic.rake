@@ -24,7 +24,7 @@ namespace :thematic do
         files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath) || filepath.end_with?("min.css")
+          unless File.directory?(filepath) || filepath.end_with?("min.css") || filepath.end_with?(".map")
             filename = filepath.split("/").last
             copy(filepath, "vendor/assets/stylesheets/#{theme_subfolder}/") 
             tempfile << " *= require #{theme_subfolder}/#{filename.gsub('.css', '')}\n"
@@ -55,7 +55,7 @@ namespace :thematic do
         files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath) || filepath.end_with?("min.js")
+          unless File.directory?(filepath) || filepath.end_with?("min.js") || filepath.end_with?(".map")
             filename = filepath.split("/").last
             copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
             tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
