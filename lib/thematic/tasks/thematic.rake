@@ -21,20 +21,17 @@ namespace :thematic do
 
     tempfile = File.open("file.tmp", 'w')
     f.each do |line|
-      break if line =~/^*= require_tree ./
+      if line =~/^*= require_tree ./ #we want to insert new require statements above this line
+        Dir.open(copy_from_path).each do |filename|
+          unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
+            copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/") 
+            tempfile << " *= require #{filename.gsub('.css', '')}\n"
+          end
+        end
+      end
       tempfile << line
     end
 
-    Dir.open(copy_from_path).each do |filename|
-      unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
-        copy("#{copy_from_path}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/") 
-        tempfile << " *= require #{filename.gsub('.css', '')}\n"
-      end
-    end
-
-    tempfile << " *= require_tree .\n"
-    tempfile << " *= require_self\n"
-    tempfile << " */\n"
     FileUtils.mv("file.tmp", file_to_edit)
     f.close
     tempfile.close
@@ -52,18 +49,17 @@ namespace :thematic do
 
     tempfile = File.open("file.tmp", 'w')
     f.each do |line|
-      break if line =~/^\/\/= require_tree ./
+      if line =~/^\/\/= require_tree ./ #we want to insert new require statements above this line
+        Dir.open(copy_from_path).each do |filename|
+          unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
+            copy("#{copy_from_path}/#{filename}", "vendor/assets/javascripts/#{theme_subfolder}/") unless File.directory?("#{copy_from_path}/#{filename}")
+            tempfile << "//= require #{filename.gsub('.js', '')}\n"
+          end
+        end
+      end
       tempfile << line
     end
 
-    Dir.open(copy_from_path).each do |filename|
-      unless File.directory?("#{copy_from_path}/#{filename}") || filename[0] == "."
-        copy("#{copy_from_path}/#{filename}", "vendor/assets/javascripts/#{theme_subfolder}/") unless File.directory?("#{copy_from_path}/#{filename}")
-        tempfile << "//= require #{filename.gsub('.js', '')}\n"
-      end
-    end
-
-    tempfile << "//= require_tree .\n"
     FileUtils.mv("file.tmp", file_to_edit)
     f.close
     tempfile.close
