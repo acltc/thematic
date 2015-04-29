@@ -5,8 +5,7 @@ namespace :thematic do
   task :install, [:filepath] do |task, args|
     # args[:filepath] represent the path of the theme
 
-    puts "Inspecting theme..."
-
+    # CSS #################################
     puts "Installing CSS..."
 
     # We will search the entire theme and all subfolders for all css files
@@ -41,6 +40,7 @@ namespace :thematic do
     f.close
     tempfile.close
 
+    # JS #################################
     puts "Installing JS..."
 
     # We will only search the js folder for js files; plugins can be added via the plugin task below
@@ -73,17 +73,22 @@ namespace :thematic do
     f.close
     tempfile.close
 
+    # IMAGES #################################
+
     puts "Copying images..."
 
     FileUtils.remove_dir "app/assets/images/#{theme_subfolder}" if File.exist?("app/assets/images/#{theme_subfolder}")
     FileUtils.mkdir "app/assets/images/#{theme_subfolder}"
 
     copy_from_path = "#{args[:filepath]}/img"
-    files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
-    files_to_copy.each do |filepath|
-      copy(filepath, "app/assets/images/#{theme_subfolder}/") unless File.directory?(filepath)
+    # We copy all files AND FOLDERS as they exist in the theme folder structure
+    Dir.open(copy_from_path).each do |filename|
+      next if filename[0] == "."
+      cp_r("#{copy_from_path}/#{filename}", "app/assets/images/#{theme_subfolder}/")
     end
+
+    # FONTS #################################
 
     puts "Copying fonts..."
 
@@ -120,6 +125,7 @@ namespace :thematic do
 
     end
 
+    # REWRITING URLS REFERENCED IN CSS ##########
     if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/style.css")
       puts "Configuring images referenced in CSS..."
       FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/style.css", "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb")
@@ -130,7 +136,8 @@ namespace :thematic do
 
       f.each do |line|
         if line =~/background.*url/
-          image_filename = /\(.*\)/.match(line)[0].delete('(').delete(')').split("/").last.delete('"')
+          # image_filename = /\(.*\)/.match(line)[0].delete('(').delete(')').split("/").last.delete('"')
+          image_filename = /".*"/.match(line)[0].split("img/").last.delete('"')
           new_snippet = "(\"<%= asset_path('#{theme_subfolder}/#{image_filename}') %>\")"
           modified_line = line.gsub(/\(.*\)/, new_snippet)
           tempfile << modified_line
@@ -141,6 +148,8 @@ namespace :thematic do
       FileUtils.mv("file.tmp", file_to_edit)
       f.close
       tempfile.close
+
+      puts "Theme installed!"
 
     end
   end 
