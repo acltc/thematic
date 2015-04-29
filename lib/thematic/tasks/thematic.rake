@@ -21,17 +21,15 @@ namespace :thematic do
     tempfile = File.open("file.tmp", 'w')
     f.each do |line|
       if line =~/^*= require_tree ./ #we want to insert new require statements above this line
-        files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
+        files_to_copy = Dir[ File.join(copy_from_path, '**', '*.css') ]
 
         #filter out minified versions of libraries that also have a non-minified version
         files_to_copy.reject! { |filename| filename.index(".min") && files_to_copy.include?(filename.gsub(".min", "")) }
 
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath) || filepath.end_with?(".map")
-            filename = filepath.split("/").last
-            copy(filepath, "vendor/assets/stylesheets/#{theme_subfolder}/") 
-            tempfile << " *= require #{theme_subfolder}/#{filename.gsub('.css', '')}\n"
-          end
+          filename = filepath.split("/").last
+          copy(filepath, "vendor/assets/stylesheets/#{theme_subfolder}/") 
+          tempfile << " *= require #{theme_subfolder}/#{filename.gsub('.css', '')}\n"
         end
  
       end
@@ -55,17 +53,15 @@ namespace :thematic do
     tempfile = File.open("file.tmp", 'w')
     f.each do |line|
       if line =~/^\/\/= require_tree ./ #we want to insert new require statements above  
-        files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
+        files_to_copy = Dir[ File.join(copy_from_path, '**', '*.js') ]
 
         #filter out minified versions of libraries that also have a non-minified version
         files_to_copy.reject! { |filename| filename.index(".min") && files_to_copy.include?(filename.gsub(".min", "")) }
 
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath) || filepath.end_with?(".map")
-            filename = filepath.split("/").last
-            copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
-            tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
-          end
+          filename = filepath.split("/").last
+          copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
+          tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
         end
       end
       tempfile << line
@@ -123,7 +119,7 @@ namespace :thematic do
     end
 
     if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/style.css")
-      puts "Configuring images mentioned inside CSS..."
+      puts "Configuring images referenced in CSS..."
       FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/style.css", "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb")
 
       file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb"
