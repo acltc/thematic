@@ -26,6 +26,8 @@ The installation only copies JavaScript from the JS folder, but if there are add
 
     rake thematic:plugin[../relative/path/to/your/plugin/folder]
 
+You can also watch a [video demo!](https://vimeo.com/126414898)
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/thematic/fork )
