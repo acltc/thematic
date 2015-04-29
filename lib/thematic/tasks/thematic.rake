@@ -9,7 +9,8 @@ namespace :thematic do
 
     puts "Installing CSS..."
 
-    copy_from_path = "#{args[:filepath]}/css"
+    # We will search the entire theme and all subfolders for all css files
+    copy_from_path = args[:filepath]
     theme_subfolder = "theme"
 
     FileUtils.remove_dir "vendor/assets/stylesheets/#{theme_subfolder}" if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}")
@@ -42,6 +43,7 @@ namespace :thematic do
 
     puts "Installing JS..."
 
+    # We will only search the js folder for js files; plugins can be added via the plugin task below
     copy_from_path = "#{args[:filepath]}/js"
 
     FileUtils.remove_dir "vendor/assets/javascripts/#{theme_subfolder}" if File.exist?("vendor/assets/javascripts/#{theme_subfolder}")
