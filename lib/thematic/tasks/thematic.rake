@@ -23,8 +23,11 @@ namespace :thematic do
       if line =~/^*= require_tree ./ #we want to insert new require statements above this line
         files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
+        #filter out minified versions of libraries that also have a non-minified version
+        files_to_copy.reject! { |filename| filename.index(".min") && files_to_copy.include?(filename.gsub(".min", "")) }
+
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath) || filepath.end_with?("min.css") || filepath.end_with?(".map")
+          unless File.directory?(filepath) || filepath.end_with?(".map")
             filename = filepath.split("/").last
             copy(filepath, "vendor/assets/stylesheets/#{theme_subfolder}/") 
             tempfile << " *= require #{theme_subfolder}/#{filename.gsub('.css', '')}\n"
@@ -54,8 +57,11 @@ namespace :thematic do
       if line =~/^\/\/= require_tree ./ #we want to insert new require statements above  
         files_to_copy = Dir[ File.join(copy_from_path, '**', '*') ]
 
+        #filter out minified versions of libraries that also have a non-minified version
+        files_to_copy.reject! { |filename| filename.index(".min") && files_to_copy.include?(filename.gsub(".min", "")) }
+
         files_to_copy.each do |filepath|
-          unless File.directory?(filepath) || filepath.end_with?("min.js") || filepath.end_with?(".map")
+          unless File.directory?(filepath) || filepath.end_with?(".map")
             filename = filepath.split("/").last
             copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
             tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
@@ -127,8 +133,7 @@ namespace :thematic do
       f.each do |line|
         if line =~/background.*url/
           image_filename = /\(.*\)/.match(line)[0].delete('(').delete(')').split("/").last.delete('"')
-          new_snippet = "(\"<%= asset_path('#{image_filename}') %>\")"
-          # modified_line = line.gsub("../", "").gsub("img", "<%= asset_path('#{theme_subfolder}").gsub("\")", "')%>\")")
+          new_snippet = "(\"<%= asset_path('#{theme_subfolder}/#{image_filename}') %>\")"
           modified_line = line.gsub(/\(.*\)/, new_snippet)
           tempfile << modified_line
         else
