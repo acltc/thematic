@@ -122,6 +122,10 @@ namespace :thematic do
       tempfile.close
     end
 
+    assets_initializer = File.open("config/initializers/assets.rb", 'a')
+    assets_initializer << "Rails.application.config.assets.paths << Rails.root.join('app', 'assets', 'fonts')"
+    assets_initializer.close
+
     # REWRITING URLS REFERENCED IN CSS ##########
     if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/style.css")
       puts "Configuring images referenced in CSS..."
@@ -145,7 +149,7 @@ namespace :thematic do
       f.close
       tempfile.close
     end
-    puts "Theme installed!" 
+    puts "Theme installed! Please restart your Rails server." 
   end 
 
   task :plugin, [:filepath] do |task, args|
@@ -203,6 +207,8 @@ namespace :thematic do
     f.close
     tempfile.close
     sourcefile.close
+
+    puts "Theme template installed!"
   end
 
 end
