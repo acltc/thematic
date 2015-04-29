@@ -141,9 +141,35 @@ namespace :thematic do
       tempfile.close
 
     end
-
-
-
-
   end 
+
+  task :plugin, [:filepath] do |task, args|
+    copy_from_path = args[:filepath]
+    theme_subfolder = "theme"
+
+    file_to_edit = "app/assets/javascripts/application.js"
+    f = File.new(file_to_edit)
+
+    tempfile = File.open("file.tmp", 'w')
+    f.each do |line|
+      if line =~/^\/\/= require_tree ./ #we want to insert new require statements above  
+        files_to_copy = Dir[ File.join(copy_from_path, '*.js') ]
+
+        #filter out minified versions of libraries that also have a non-minified version
+        files_to_copy.reject! { |filename| filename.index(".min") && files_to_copy.include?(filename.gsub(".min", "")) }
+
+        files_to_copy.each do |filepath|
+          filename = filepath.split("/").last
+          copy(filepath, "vendor/assets/javascripts/#{theme_subfolder}/") 
+          tempfile << "//= require #{theme_subfolder}/#{filename.gsub('.js', '')}\n"
+        end
+      end
+      tempfile << line
+    end
+
+    FileUtils.mv("file.tmp", file_to_edit)
+    f.close
+    tempfile.close
+  end
+
 end
