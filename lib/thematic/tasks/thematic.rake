@@ -3,7 +3,7 @@ require 'fileutils'
 namespace :thematic do
   desc "descriptions of the task" 
   task :install, [:filepath] do |task, args|
-    # args[:filepath] represent the path of the theme
+    # args[:filepath] represent the path of the theme, which is inputed by the user
 
     # CSS #################################
     puts "Installing CSS..."
@@ -74,7 +74,6 @@ namespace :thematic do
     tempfile.close
 
     # IMAGES #################################
-
     puts "Copying images..."
 
     FileUtils.remove_dir "app/assets/images/#{theme_subfolder}" if File.exist?("app/assets/images/#{theme_subfolder}")
@@ -89,7 +88,6 @@ namespace :thematic do
     end
 
     # FONTS #################################
-
     puts "Copying fonts..."
 
     FileUtils.mkdir "app/assets/fonts" unless File.exist?("app/assets/fonts")
@@ -122,7 +120,6 @@ namespace :thematic do
       FileUtils.mv("file.tmp", file_to_edit)
       f.close
       tempfile.close
-
     end
 
     # REWRITING URLS REFERENCED IN CSS ##########
@@ -136,7 +133,6 @@ namespace :thematic do
 
       f.each do |line|
         if line =~/background.*url/
-          # image_filename = /\(.*\)/.match(line)[0].delete('(').delete(')').split("/").last.delete('"')
           image_filename = /".*"/.match(line)[0].split("img/").last.delete('"')
           new_snippet = "(\"<%= asset_path('#{theme_subfolder}/#{image_filename}') %>\")"
           modified_line = line.gsub(/\(.*\)/, new_snippet)
@@ -148,10 +144,8 @@ namespace :thematic do
       FileUtils.mv("file.tmp", file_to_edit)
       f.close
       tempfile.close
-
-      puts "Theme installed!"
-
     end
+    puts "Theme installed!" 
   end 
 
   task :plugin, [:filepath] do |task, args|
@@ -181,6 +175,34 @@ namespace :thematic do
     FileUtils.mv("file.tmp", file_to_edit)
     f.close
     tempfile.close
+  end
+
+  task :template, [:filepath] do |task, args|
+    theme_subfolder = "theme"
+
+    # user is expected to input which html template to copy from
+    sourcefile = File.open(args[:filepath], 'r')
+
+    file_to_edit = "app/views/layouts/application.html.erb"
+    f = File.new(file_to_edit)
+
+    tempfile = File.open("file.tmp", 'w')
+    f.each do |line|
+      break if line =~/<body/ #we will remove existing body and replace it from theme  
+      tempfile << line
+    end
+
+    reached_body = false
+    sourcefile.each do |line|
+      reached_body = true if line =~/<body/
+      next unless reached_body
+      tempfile << line.gsub("img/", "assets/#{theme_subfolder}/")
+    end
+
+    FileUtils.mv("file.tmp", file_to_edit)
+    f.close
+    tempfile.close
+    sourcefile.close
   end
 
 end

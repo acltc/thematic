@@ -18,6 +18,13 @@ Navigate to the root folder of your application, and run the following command:
     
 The root folder of your theme should be the one that contains the folders 'css' and 'js', as is standard in most WrapBoostrap themes.
 
+You can also automatically grab an entire HTML template from the theme as well, and copy it into your app/views/layouts/application.html.erb. (WARNING: THIS WILL OVERWRITE ANY CUSTOM CODE YOU HAVE THERE. So this is something you would do early on in your project.) To do so, run this command:
+
+    rake thematic:template[../relative/path/to/your/theme/template/index.html]
+
+The installation only copies JavaScript from the JS folder, but if there are additional plugins inside another plugins folder, you can also install each plugin individually with:
+
+    rake thematic:plugin[../relative/path/to/your/plugin/folder]
 
 ## Contributing
 
