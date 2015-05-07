@@ -12,6 +12,12 @@ namespace :thematic do
     copy_from_path = args[:filepath]
     theme_subfolder = "theme"
 
+    if File.exist?("#{args[:filepath]}/img")
+      images_folder = "img"
+    elsif File.exist?("#{args[:filepath]}/images")
+      images_folder = "images"
+    end
+
     FileUtils.remove_dir "vendor/assets/stylesheets/#{theme_subfolder}" if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}")
     FileUtils.mkdir "vendor/assets/stylesheets/#{theme_subfolder}"
 
@@ -79,7 +85,7 @@ namespace :thematic do
     FileUtils.remove_dir "app/assets/images/#{theme_subfolder}" if File.exist?("app/assets/images/#{theme_subfolder}")
     FileUtils.mkdir "app/assets/images/#{theme_subfolder}"
 
-    copy_from_path = "#{args[:filepath]}/img"
+    copy_from_path = "#{args[:filepath]}/#{images_folder}"
 
     # We copy all files AND FOLDERS as they exist in the theme folder structure
     Dir.open(copy_from_path).each do |filename|
@@ -137,7 +143,7 @@ namespace :thematic do
 
       f.each do |line|
         if line =~/background.*url/
-          image_filename = /".*"/.match(line)[0].split("img/").last.delete('"')
+          image_filename = /("|').*("|')/.match(line)[0].split("#{images_folder}/").last.delete('"').delete("'")
           new_snippet = "(\"<%= asset_path('#{theme_subfolder}/#{image_filename}') %>\")"
           modified_line = line.gsub(/\(.*\)/, new_snippet)
           tempfile << modified_line
@@ -200,7 +206,7 @@ namespace :thematic do
     sourcefile.each do |line|
       reached_body = true if line =~/<body/
       next unless reached_body
-      tempfile << line.gsub("img/", "assets/#{theme_subfolder}/")
+      tempfile << line.gsub("#{images_folder}/", "assets/#{theme_subfolder}/")
     end
 
     FileUtils.mv("file.tmp", file_to_edit)
