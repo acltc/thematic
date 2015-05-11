@@ -3,7 +3,24 @@ require 'fileutils'
 namespace :thematic do
   desc "descriptions of the task" 
   task :install, [:filepath] do |task, args|
-    # args[:filepath] represent the path of the theme, which is inputed by the user
+
+    # There are a number of things that need to happen in order to install a theme properly
+    # into a Rails application. They are:
+    # 1. CSS, JS, fonts, and image files must all be copied over into the Rails app.
+    #    CSS and JS files belong in the vendor/assets folders, while fonts and images will 
+    #    go into app/assets.   
+    # 2. Anything inside vendor must be explicitly referenced by the application.css and
+    #    application.js files under app/assets. Each and every file must be referenced.
+    # 3. Any time that an image url or font url is referenced inside CSS, it must be
+    #    modified as follows: The css file must be given a .erb extension, and the url
+    #    must be wrapped in erb with an asset path or font path. 
+    #    For example: url('images/picture.png')
+    #    must be edited to: url('<%= asset_path("theme/picture.png") %>')
+    #    and url('../fonts/fontawesome-webfont.eot?v=4.2.0')
+    #    must be edited to: url('<%= font_path('theme/fontawesome-webfont.eot')%>?v=4.2.0')
+    # 4. Whenever an image is referenced inside HTML, an image_tag or image_path within
+    #    erb must be used instead of the plain HTML.
+    # Currently, this gem accomplishes steps 1 - 3, and step 4 must be done manually.
 
     # CSS #################################
     puts "Installing CSS..."
