@@ -10,13 +10,9 @@ namespace :thematic do
 
     # We will search the entire theme and all subfolders for all css files
     copy_from_path = args[:filepath]
-    theme_subfolder = "theme"
-
-    if File.exist?("#{args[:filepath]}/img")
-      images_folder = "img"
-    elsif File.exist?("#{args[:filepath]}/images")
-      images_folder = "images"
-    end
+    theme_subfolder = ENV["THEME"] || "theme"
+    images_folder = ENV["IMAGES"] || "img"
+    javascript_folder = ENV["JAVASCRIPT"] || "js"
 
     FileUtils.remove_dir "vendor/assets/stylesheets/#{theme_subfolder}" if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}")
     FileUtils.mkdir "vendor/assets/stylesheets/#{theme_subfolder}"
@@ -50,7 +46,7 @@ namespace :thematic do
     puts "Installing JS..."
 
     # We will only search the js folder for js files; plugins can be added via the plugin task below
-    copy_from_path = "#{args[:filepath]}/js"
+    copy_from_path = "#{args[:filepath]}/#{javascript_folder}"
 
     FileUtils.remove_dir "vendor/assets/javascripts/#{theme_subfolder}" if File.exist?("vendor/assets/javascripts/#{theme_subfolder}")
     FileUtils.mkdir "vendor/assets/javascripts/#{theme_subfolder}"
@@ -160,7 +156,8 @@ namespace :thematic do
 
   task :plugin, [:filepath] do |task, args|
     copy_from_path = args[:filepath]
-    theme_subfolder = "theme"
+    theme_subfolder = ENV["THEME"] || "theme"
+
 
     file_to_edit = "app/assets/javascripts/application.js"
     f = File.new(file_to_edit)
@@ -188,7 +185,8 @@ namespace :thematic do
   end
 
   task :template, [:filepath] do |task, args|
-    theme_subfolder = "theme"
+    theme_subfolder = ENV["THEME"] || "theme"
+    images_folder = ENV["IMAGES"] || "img"
 
     # user is expected to input which html template to copy from
     sourcefile = File.open(args[:filepath], 'r')
