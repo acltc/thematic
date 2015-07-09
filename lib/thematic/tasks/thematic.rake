@@ -34,7 +34,12 @@ namespace :thematic do
     FileUtils.remove_dir "vendor/assets/stylesheets/#{theme_subfolder}" if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}")
     FileUtils.mkdir "vendor/assets/stylesheets/#{theme_subfolder}"
 
-    file_to_edit = "app/assets/stylesheets/application.css"
+    if File.exist?("app/assets/stylesheets/application.css") # the default of older Rails versions
+      file_to_edit = "app/assets/stylesheets/application.css"
+    else
+      file_to_edit = "app/assets/stylesheets/application.scss"
+    end
+
     f = File.new(file_to_edit)
 
     tempfile = File.open("file.tmp", 'w')
@@ -156,6 +161,7 @@ namespace :thematic do
 
       f.each do |line|
         if line =~/background.*url/
+          # TODO: Some themes omit the quotation marks around the url
           image_filename = /("|').*("|')/.match(line)[0].split("#{images_folder}/").last.delete('"').delete("'")
           new_snippet = "(\"<%= asset_path('#{theme_subfolder}/#{image_filename}') %>\")"
           modified_line = line.gsub(/\(.*\)/, new_snippet)
