@@ -151,11 +151,13 @@ namespace :thematic do
     assets_initializer.close
 
     # REWRITING URLS REFERENCED IN CSS ##########
-    if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/style.css")
-      puts "Configuring images referenced in CSS..."
-      FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/style.css", "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb")
+    puts "Configuring images referenced in CSS..."
+    Dir.open("vendor/assets/stylesheets/#{theme_subfolder}").each do |filename|
+      next if filename[0] == "."
+      # TODO: Do the same for all css files - not just style.css
+      FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/#{filename}.erb")
 
-      file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/style.css.erb"
+      file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/#{filename}.erb"
       f = File.new(file_to_edit)
       tempfile = File.open("file.tmp", 'w')
 
