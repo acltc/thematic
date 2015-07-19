@@ -162,8 +162,7 @@ namespace :thematic do
 
       f.each do |line|
         if line =~/background.*url/
-          # TODO: Some themes omit the quotation marks around the url
-          image_filename = /("|').*("|')/.match(line)[0].split("#{images_folder}/").last.delete('"').delete("'")
+          image_filename = /\(.*\)/.match(line)[0].split("#{images_folder}/").last.delete('"').delete("'").delete(")")
           new_snippet = "(\"<%= asset_path('#{theme_subfolder}/#{image_filename}') %>\")"
           modified_line = line.gsub(/\(.*\)/, new_snippet)
           tempfile << modified_line
@@ -175,7 +174,7 @@ namespace :thematic do
       f.close
       tempfile.close
     end
-    
+
     puts "Theme installed! Please restart your Rails server." 
   end 
 
