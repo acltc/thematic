@@ -154,7 +154,6 @@ namespace :thematic do
     puts "Configuring images referenced in CSS..."
     Dir.open("vendor/assets/stylesheets/#{theme_subfolder}").each do |filename|
       next if filename[0] == "."
-      # TODO: Do the same for all css files - not just style.css
       FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/#{filename}", "vendor/assets/stylesheets/#{theme_subfolder}/#{filename}.erb")
 
       file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/#{filename}.erb"
@@ -176,6 +175,7 @@ namespace :thematic do
       f.close
       tempfile.close
     end
+    
     puts "Theme installed! Please restart your Rails server." 
   end 
 
