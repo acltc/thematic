@@ -127,9 +127,10 @@ namespace :thematic do
 
     if File.exist?("vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css")
       puts "Configuring FontAwesome..."
-      FileUtils.mv("vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css", "vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css.erb")
 
-      file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css.erb"
+      file_to_edit = "vendor/assets/stylesheets/#{theme_subfolder}/font-awesome.css"
+      # we aren't adding the .erb extension since that will be done later
+
       f = File.new(file_to_edit)
       tempfile = File.open("file.tmp", 'w')
 
